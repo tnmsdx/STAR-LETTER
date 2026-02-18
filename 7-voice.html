@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>あなたの手紙</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/voices.css">
+  <style>
+    /* 削除ボタン */
+    .delete-btn {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .delete-btn:hover {
+      color: rgba(220, 100, 100, 0.9);
+      background: rgba(200, 80, 80, 0.15);
+    }
+
+    /* 削除確認モーダル */
+    .delete-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .delete-modal-content {
+      background: rgba(30, 30, 50, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 36px 28px;
+      max-width: 340px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .delete-modal-content p.modal-title {
+      color: #fff;
+      font-size: 16px;
+      margin: 0 0 8px 0;
+    }
+    .delete-modal-content p.modal-sub {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      margin: 0 0 28px 0;
+    }
+    .delete-modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .delete-modal-buttons button {
+      padding: 8px 24px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .delete-modal-buttons button:hover {
+      opacity: 0.8;
+    }
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      color: #fff;
+    }
+    .btn-delete-confirm {
+      background: rgba(200, 80, 80, 0.7);
+      color: #fff;
+    }
+
+    /* post-meta に削除ボタンが並ぶようにflex調整 */
+    .post-meta {
+      display: flex;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="voices-container">
+    <!-- ヘッダー -->
+    <div class="page-header">
+      <!-- 左上：ホームに戻るボタン -->
+      <button class="home-btn" onclick="location.href='5-home.html'">
+        <img src="images/home.png" alt="ホームに戻る" style="width: 50px; height: 50px;">
+      </button>
+
+      <!-- タイトル -->
+      <h1 class="title-text">あなたの手紙</h1>
+
+      <!-- 右上：だれかの声ボタン -->
+      <button class="voice-btn" onclick="location.href='14-bottle.html'">
+        <img src="images/comment.png" alt="だれかの声" style="width: 50px; height: 50px;">
+      </button>
+    </div>
+
+    <!-- 投稿リスト -->
+    <div id="postList" class="post-list">
+      <div class="loading">読み込み中...</div>
+    </div>
+
+    <!-- 下部：手紙を書くボタン -->
+    <div class="bottom-action">
+      <button class="write-btn" onclick="location.href='6-write.html'">
+        手紙を書く
+      </button>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+  <script>
+    // 認証チェック
+    requireAuth();
+
+    // 自分の投稿を取得して表示
+    async function loadMyPosts() {
+      const postList = document.getElementById('postList');
+      
+      try {
+        const token = getToken();
+        const response = await fetch(`${API_BASE_URL}/posts/my-posts`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('投稿の取得に失敗しました');
+        }
+
+        const posts = await response.json();
+        
+        // 投稿がない場合
+        if (posts.length === 0) {
+          postList.innerHTML = '<div class="no-posts">まだ手紙を書いていません<br>✨ 最初の手紙を書いてみましょう</div>';
+          return;
+        }
+
+        // 投稿を表示
+        postList.innerHTML = posts.map(post => `
+          <div class="post-card" onclick="viewPostDetail(${post.id})">
+            <div class="post-content">${escapeHtml(post.content)}</div>
+            <div class="post-meta">
+              <div class="post-date">
+                <span> ${formatDate(post.created_at)}</span>
+              </div>
+              <div class="post-badges">
+                ${post.is_anonymous ? '<span class="badge anonymous">匿名</span>' : ''}
+                ${post.is_shooting_star ? '<span class="badge shooting-star">⭐ 流れ星</span>' : ''}
+              </div>
+              <button class="delete-btn" onclick="event.stopPropagation(); confirmDeletePost(${post.id})">削除</button>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        postList.innerHTML = '<div class="loading">エラーが発生しました</div>';
+      }
+    }
+
+    // 日付フォーマット
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${month}/${day} ${hours}:${minutes}`;
+    }
+
+    // HTMLエスケープ
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // 投稿詳細ページへ遷移
+    function viewPostDetail(postId) {
+      window.location.href = `9-mypost.html?post_id=${postId}`;
+    }
+
+    // ===== 削除確認モーダル =====
+    function confirmDeletePost(postId) {
+      const modal = document.createElement('div');
+      modal.className = 'delete-modal-overlay';
+      modal.id = 'delete-confirm-modal';
+
+      modal.innerHTML = `
+        <div class="delete-modal-content">
+          <p class="modal-title">この手紙を削除しますか？</p>
+          <p class="modal-sub">削除したら元に戻せません</p>
+          <div class="delete-modal-buttons">
+            <button class="btn-cancel" onclick="closeDeleteModal()">キャンセル</button>
+            <button class="btn-delete-confirm" onclick="executeDeletePost(${postId})">削除</button>
+          </div>
+        </div>
+      `;
+
+      modal.onclick = (e) => {
+        if (e.target === modal) closeDeleteModal();
+      };
+
+      document.body.appendChild(modal);
+    }
+
+    // 削除モーダルを閉じる
+    function closeDeleteModal() {
+      const modal = document.getElementById('delete-confirm-modal');
+      if (modal) modal.remove();
+    }
+
+    // 削除実行
+    async function executeDeletePost(postId) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/posts/${postId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          closeDeleteModal();
+          // 削除後に一覧を再読み込み
+          loadMyPosts();
+        } else {
+          const error = await response.json();
+          alert(error.error || '削除に失敗しました');
+        }
+      } catch (error) {
+        console.error('削除エラー:', error);
+        alert('削除に失敗しました');
+      }
+    }
+
+    // ページ読み込み時に投稿を取得
+    loadMyPosts();
+  </script>
+</body>
+
+</html>

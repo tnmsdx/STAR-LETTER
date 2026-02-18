@@ -1,0 +1,226 @@
+/* 投稿詳細ページ専用CSS */
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.detail-container {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+}
+
+/* ヘッダー */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-size: 2rem;
+  color: #aebaff;
+  text-decoration: none;
+  padding: 10px 20px;
+  transition: 0.3s;
+  text-shadow: 0 0 10px rgba(174, 186, 255, 0.6);
+  border-radius: 10px;
+}
+
+.back-btn:hover {
+  color: #ffe97b;
+  text-shadow: 0 0 15px #ffe97b;
+  transform: translateX(-5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.title-text {
+  font-family: "Kaisei Decol", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 2.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  margin: 0;
+  animation: titleGlow 3s ease-in-out infinite;
+  letter-spacing: 0.1em;
+  text-align: center;
+  flex: 1;
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 35px rgba(174, 186, 255, 1);
+  }
+}
+
+.header-spacer {
+  width: 60px;
+}
+
+/* セクションタイトル */
+.section-title {
+  font-family: "Kaisei Decol", serif;
+  font-size: 1.8rem;
+  color: #aebaff;
+  text-shadow: 0 0 15px rgba(174, 186, 255, 0.6);
+  margin: 40px 0 20px 0;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+/* 投稿表示 */
+.my-post,
+.original-post {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(174, 186, 255, 0.3);
+  border-radius: 18px;
+  padding: 25px;
+  backdrop-filter: blur(12px);
+  margin-bottom: 30px;
+}
+
+.post-author {
+  color: #ffe97b;
+  font-weight: bold;
+  font-size: 1.15rem;
+  text-shadow: 0 0 10px rgba(255, 233, 123, 0.5);
+  margin-bottom: 8px;
+}
+
+.post-date {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.post-content {
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.9;
+  font-size: 1.05rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  letter-spacing: 0.02em;
+}
+
+/* コメントセクション */
+.comments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loading,
+.error,
+.no-comments {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  padding: 40px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.error {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+/* コメントアイテム */
+.comment-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(174, 186, 255, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+}
+
+.comment-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(174, 186, 255, 0.4);
+  transform: translateX(5px);
+}
+
+/* ハイライト（特定のコメント） */
+.comment-item.highlight {
+  background: rgba(255, 233, 123, 0.1);
+  border-color: rgba(255, 233, 123, 0.5);
+  box-shadow: 0 0 20px rgba(255, 233, 123, 0.3);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.comment-author {
+  color: #ffe97b;
+  font-weight: bold;
+  font-size: 1rem;
+  text-shadow: 0 0 8px rgba(255, 233, 123, 0.4);
+}
+
+.comment-date {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+}
+
+.comment-content {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.8;
+  font-size: 1rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .detail-container {
+    padding: 15px;
+  }
+
+  .title-text {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .my-post,
+  .original-post,
+  .comment-item {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-text {
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  .back-btn {
+    font-size: 1.5rem;
+  }
+
+  .header-spacer {
+    width: 40px;
+  }
+}

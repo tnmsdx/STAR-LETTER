@@ -1,0 +1,256 @@
+/* ===== 全ページ共通ベーススタイル ===== */
+
+/* 背景色：紺色 */
+body {
+    background-color: #001f3f;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: #ffffff;
+    font-family: "Zen Old Mincho", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* 利用規約ページ専用：中央配置 */
+body.terms-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 中央配置用ページ（利用規約、新規登録など） */
+body.centered-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* タイトルとフォームの距離を近づける */
+body.centered-page .title-text {
+    margin-bottom: 40px;
+}
+
+.title-text {
+  font-family: "Kaisei Decol", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 4rem;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  margin: 0 0 100px 0;
+  animation: titleGlow 3s ease-in-out infinite;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 35px rgba(174, 186, 255, 1);
+  }
+}
+
+@media (max-width: 768px) {
+  .title-text {
+    font-size: 3rem;
+    margin-bottom: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-text {
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+  }
+}
+
+/* 背景画像 */
+.background-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* フォーム共通 */
+form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* フォーム行：ラベルと入力欄を横並び */
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-row label {
+    min-width: 150px;
+    text-align: right;
+    margin: 0;
+}
+
+.form-row input {
+    flex: 1;
+    margin: 0;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 41%);
+    color: #ffffff;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+input[type="submit"],
+button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    margin: 20px 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffd700;
+    color: #001f3f;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover,
+button[type="submit"]:hover {
+    background-color: #ffed4e;
+}
+
+/* リンク */
+a {
+    color: #ffd700;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #ffed4e;
+}
+
+/* ラベル */
+label {
+    color: #ffffff;
+    font-size: 16px;
+    margin: 10px 0 5px;
+    display: block;
+}
+
+/* コンテナ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* ラジオボタンを横並びに */
+.radio-group {
+    display: flex;
+    gap: 30px;
+    margin: 20px 0;
+    justify-content: center;
+}
+.radio-text {
+    font-family: "Kaisei Decol", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 2rem;
+    transition: color 0.3s, text-shadow 0.3s;
+}
+
+/* 女性: ピンク */
+.radio-label:nth-child(1) .radio-text {
+    color: #ff69b4;
+}
+
+.radio-label:nth-child(1):hover .radio-text {
+    color: #ff1493;
+    text-shadow: 0 0 10px rgba(255, 105, 180, 0.6);
+}
+
+.radio-label:nth-child(1) input[type="radio"]:checked + .radio-text {
+    color: #ff1493;
+    text-shadow: 0 0 15px rgba(255, 105, 180, 0.8);
+}
+
+/* 男性: 水色 */
+.radio-label:nth-child(2) .radio-text {
+    color: #87ceeb;
+}
+
+.radio-label:nth-child(2):hover .radio-text {
+    color: #00bfff;
+    text-shadow: 0 0 10px rgba(135, 206, 235, 0.6);
+}
+
+.radio-label:nth-child(2) input[type="radio"]:checked + .radio-text {
+    color: #00bfff;
+    text-shadow: 0 0 15px rgba(135, 206, 235, 0.8);
+}
+
+/* 秘密: 黄色 */
+.radio-label:nth-child(3) .radio-text {
+    color: #ffd700;
+}
+
+.radio-label:nth-child(3):hover .radio-text {
+    color: #ffed4e;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.radio-label:nth-child(3) input[type="radio"]:checked + .radio-text {
+    color: #ffed4e;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+/* 利用規約ページ用のスタイル */
+.agreement-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin: 30px 0;
+    color: #ffffff;
+    text-align: center;
+}
+
+.checkbox {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.checkbox label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
+    width: auto;
+    cursor: pointer;
+}

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+  <title>フォロー</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/friend.css">
+</head>
+
+<body>
+
+  <div class="friend-container">
+    <!-- ヘッダー -->
+    <div class="page-header">
+      <button class="home-btn" onclick="location.href='5-home.html'">
+        <img src="images/home.png" alt="ホームに戻る" style="width: 50px; height: 50px;">
+      </button>
+      <h1 class="title-text">フォロー</h1>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- タブ -->
+    <div class="friend-tabs">
+      <button class="tab-btn active" data-tab="following">フォロー中</button>
+      <button class="tab-btn" data-tab="followers">フォロワー</button>
+    </div>
+
+    <!-- ユーザーリスト -->
+    <div id="userList" class="user-list">
+      <div class="loading">読み込み中...</div>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // 認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    let currentTab = 'following';
+
+    // タブ切り替え
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // アクティブなタブを更新
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // タブを切り替え
+        currentTab = btn.dataset.tab;
+        loadUsers();
+      });
+    });
+
+    // ユーザーを読み込む
+    async function loadUsers() {
+      const userList = document.getElementById('userList');
+      userList.innerHTML = '<div class="loading">読み込み中...</div>';
+
+      try {
+        const token = localStorage.getItem('token');
+        const endpoint = currentTab === 'following' ? 'following' : 'followers';
+        
+        const response = await fetch(`http://localhost:3000/api/users/${endpoint}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('ユーザーの取得に失敗しました');
+        }
+
+        const users = await response.json();
+
+        if (users.length === 0) {
+          userList.innerHTML = `<div class="no-users">${currentTab === 'following' ? 'まだフォローしているユーザーはいません' : 'まだフォロワーはいません'}</div>`;
+          return;
+        }
+
+        userList.innerHTML = '';
+        
+        users.forEach(user => {
+          const userCard = createUserCard(user);
+          userList.appendChild(userCard);
+        });
+      } catch (error) {
+        console.error('ユーザー読み込みエラー:', error);
+        userList.innerHTML = '<div class="error">ユーザーの読み込みに失敗しました</div>';
+      }
+    }
+
+    // ユーザーカードを作成
+    function createUserCard(user) {
+      const div = document.createElement('div');
+      div.className = 'user-card';
+      
+      const genderText = user.gender === 'female' ? '女性' : user.gender === 'male' ? '男性' : '秘密';
+      
+      div.innerHTML = `
+        <div class="user-info">
+          <div class="user-name">${user.username}</div>
+          <div class="user-gender">${genderText}</div>
+        </div>
+        <button class="view-profile-btn" onclick="goToProfile(${user.id})">
+          プロフィール
+        </button>
+      `;
+      
+      return div;
+    }
+
+    // プロフィールページへ移動
+    function goToProfile(userId) {
+      window.location.href = `16-profile.html?user_id=${userId}`;
+    }
+
+    // ページ読み込み時
+    window.addEventListener('load', () => {
+      loadUsers();
+    });
+  </script>
+</body>
+
+</html>

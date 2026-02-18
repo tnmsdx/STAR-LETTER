@@ -1,0 +1,367 @@
+/* 設定ページ専用CSS */
+
+.settings-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ヘッダー */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+
+.home-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.3s;
+}
+
+.home-btn:hover {
+  opacity: 0.7;
+}
+
+.title-text {
+  font-family: "Kaisei Decol", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 3rem;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  margin: 0;
+  animation: titleGlow 3s ease-in-out infinite;
+  letter-spacing: 0.1em;
+  flex: 1;
+  text-align: center;
+}
+
+@keyframes titleGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  }
+
+  50% {
+    text-shadow: 0 0 35px rgba(174, 186, 255, 1);
+  }
+}
+
+.logout-btn-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.3s;
+}
+
+.logout-btn-header:hover {
+  opacity: 0.7;
+}
+
+.logout-text {
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-family: "Zen Old Mincho", serif;
+  white-space: nowrap;
+}
+
+/* 設定フォーム */
+.settings-form {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 80px;
+  backdrop-filter: blur(10px);
+}
+
+.form-group {
+  margin-bottom: 35px;
+}
+
+.form-group label {
+  display: block;
+  color: #ffffff;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(174, 186, 255, 0.5);
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"] {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-family: "Zen Old Mincho", serif;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus {
+  outline: none;
+  border-color: rgba(174, 186, 255, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 15px rgba(174, 186, 255, 0.3);
+}
+
+/* 性別選択 */
+.gender-options {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}
+
+.gender-label {
+  cursor: pointer;
+}
+
+.gender-label input[type="radio"] {
+  display: none;
+}
+
+.gender-text {
+  font-size: 1.5rem;
+  padding: 10px 30px;
+  border-radius: 10px;
+  transition: all 0.3s;
+  display: inline-block;
+}
+
+.gender-text.female {
+  color: #ff69b4;
+  border: 2px solid #ff69b4;
+}
+
+.gender-text.male {
+  color: #87ceeb;
+  border: 2px solid #87ceeb;
+}
+
+.gender-label input[type="radio"]:checked+.gender-text.female {
+  background: rgba(255, 105, 180, 0.3);
+  box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+}
+
+.gender-label input[type="radio"]:checked+.gender-text.male {
+  background: rgba(135, 206, 235, 0.3);
+  box-shadow: 0 0 20px rgba(135, 206, 235, 0.5);
+}
+
+/* 空の色選択 */
+.color-options {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.color-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.color-label input[type="radio"] {
+  display: none;
+}
+
+.color-label input[type="radio"]:checked+.color-box {
+  border-color: #ffd700;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.color-name {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+/* 通知選択 */
+.notification-options {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}
+
+.notification-label {
+  cursor: pointer;
+}
+
+.notification-label input[type="radio"] {
+  display: none;
+}
+
+.notification-text {
+  font-size: 1.3rem;
+  padding: 10px 40px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s;
+  display: inline-block;
+}
+
+.notification-label input[type="radio"]:checked+.notification-text {
+  background: rgba(174, 186, 255, 0.3);
+  border-color: #aebaff;
+  color: #aebaff;
+  box-shadow: 0 0 20px rgba(174, 186, 255, 0.4);
+}
+
+/* 保存ボタン */
+.save-btn {
+  width: 100%;
+  padding: 18px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 15px;
+  background:  #fff067;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: "Zen Old Mincho", serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.save-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(234, 230, 102, 0.6);
+}
+
+/* アクションボタン（削除） */
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 40px;
+  padding: 20px 0;
+  justify-content: center;
+}
+
+.delete-account-btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: "Zen Old Mincho", serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 2px solid rgba(255, 107, 107, 0.4);
+}
+
+.delete-account-btn:hover {
+  background: rgba(255, 107, 107, 0.3);
+  border-color: rgba(255, 107, 107, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+/* 性別・誕生日の表示エリア */
+.gender-display,
+.birthday-display {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 12px 20px;
+  text-align: center;
+}
+
+.display-value {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 15px;
+  }
+
+  .title-text {
+    font-size: 2.5rem;
+  }
+
+  .settings-form {
+    padding: 30px 20px;
+  }
+
+  .gender-options,
+  .notification-options {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .gender-text,
+  .notification-text {
+    width: 100%;
+    text-align: center;
+  }
+
+  .color-options {
+    gap: 20px;
+  }
+
+  .color-box {
+    width: 60px;
+    height: 60px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .delete-account-btn {
+    width: 100%;
+  }
+
+  .logout-text {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-text {
+    font-size: 2rem;
+  }
+
+  .form-group label {
+    font-size: 1.1rem;
+  }
+
+  .save-btn {
+    font-size: 1.3rem;
+  }
+
+  .delete-account-btn {
+    font-size: 1.1rem;
+  }
+
+  .logout-text {
+    font-size: 0.7rem;
+  }
+}

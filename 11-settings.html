@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>プロフィール設定</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/settings.css">
+</head>
+
+<body>
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="settings-container">
+    <!-- ヘッダー -->
+    <div class="page-header">
+      <button class="home-btn" onclick="location.href='5-home.html'">
+        <img src="images/home.png" alt="ホームに戻る" style="width: 50px; height: 50px;">
+      </button>
+      <h1 class="title-text">プロフィール</h1>
+      <button type="button" class="logout-btn-header" id="logoutBtn" title="ログアウト">
+        <img src="images/settei.png" alt="ログアウト" style="width: 50px; height: 50px;">
+        <span class="logout-text">ログアウト</span>
+      </button>
+    </div>
+
+    <!-- 設定フォーム -->
+    <form id="settingsForm" class="settings-form">
+      <div class="form-group">
+        <label for="username">お名前</label>
+        <input type="text" id="username" name="username" placeholder="お名前を入力" required>
+      </div>
+
+      <div class="form-group">
+        <label for="gender">性別</label>
+        <div class="gender-options">
+          <label class="gender-label">
+            <input type="radio" name="gender" value="female">
+            <span class="gender-text female">女性</span>
+          </label>
+          <label class="gender-label">
+            <input type="radio" name="gender" value="male">
+            <span class="gender-text male">男性</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="birthday">誕生日</label>
+        <input type="date" id="birthday" name="birthday" required>
+      </div>
+
+      <button type="submit" class="save-btn">保存</button>
+    </form>
+
+    <!-- アカウント削除ボタン -->
+    <div class="action-buttons">
+      <button type="button" class="delete-account-btn" onclick="location.href='12-delete.html'">アカウント削除</button>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // 認証チェック
+  if (!isLoggedIn()) {
+    alert('ログインが必要です');
+    window.location.href = '4-login.html';
+  }
+
+  // 現在の設定を読み込む
+  async function loadCurrentSettings() {
+    try {
+      const user = await getCurrentUser();
+      
+      if (user) {
+        // お名前
+        document.getElementById('username').value = user.username || '';
+        
+        // 性別（事前選択）
+        if (user.gender) {
+          const genderRadio = document.querySelector(`input[name="gender"][value="${user.gender}"]`);
+          if (genderRadio) {
+            genderRadio.checked = true;
+          }
+        }
+        
+        // 誕生日（事前選択）← ここを修正
+        if (user.birthday) {
+          // 日付をYYYY-MM-DD形式に変換
+          const date = new Date(user.birthday);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const formattedDate = `${year}-${month}-${day}`;
+          
+          console.log('元の誕生日:', user.birthday);
+          console.log('変換後:', formattedDate);
+          
+          document.getElementById('birthday').value = formattedDate;
+        }
+        
+        // 通知（事前選択）
+        if (user.notification !== undefined) {
+          const notificationValue = user.notification ? 'on' : 'off';
+          const notificationRadio = document.querySelector(`input[name="notification"][value="${notificationValue}"]`);
+          if (notificationRadio) {
+            notificationRadio.checked = true;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('設定の読み込みエラー:', error);
+    }
+  }
+
+  // フォーム送信
+  document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+      username: document.getElementById('username').value,
+      gender: document.querySelector('input[name="gender"]:checked')?.value,
+      birthday: document.getElementById('birthday').value,
+      notification: document.querySelector('input[name="notification"]:checked')?.value === 'on'
+    };
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3000/api/users/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.ok) {
+        alert('設定を保存しました');
+        window.location.href = '5-home.html';
+      } else {
+        alert('設定の保存に失敗しました');
+      }
+    } catch (error) {
+      console.error('保存エラー:', error);
+      alert('設定の保存に失敗しました');
+    }
+  });
+
+  // ログアウトボタン
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    if (confirm('ログアウトしますか？')) {
+      logout();
+      alert('ログアウトしました');
+      window.location.href = '0-welcome.html';
+    }
+  });
+
+  // ページ読み込み時
+  window.addEventListener('load', () => {
+    loadCurrentSettings();
+  });
+</script>
+
+</body>
+
+</html>

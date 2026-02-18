@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>星空</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/home.css">
+  <style>
+    /* 削除ボタン */
+    .delete-btn {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .delete-btn:hover {
+      color: rgba(220, 100, 100, 0.9);
+      background: rgba(200, 80, 80, 0.15);
+    }
+
+    /* 削除確認モーダル */
+    .delete-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .delete-modal-content {
+      background: rgba(30, 30, 50, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 36px 28px;
+      max-width: 340px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .delete-modal-content p.modal-title {
+      color: #fff;
+      font-size: 16px;
+      margin: 0 0 8px 0;
+    }
+    .delete-modal-content p.modal-sub {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      margin: 0 0 28px 0;
+    }
+    .delete-modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .delete-modal-buttons button {
+      padding: 8px 24px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .delete-modal-buttons button:hover {
+      opacity: 0.8;
+    }
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      color: #fff;
+    }
+    .btn-delete-confirm {
+      background: rgba(200, 80, 80, 0.7);
+      color: #fff;
+    }
+
+    /* 星の表示エリア */
+    .stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-star {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      animation: twinkle 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+  </style>
+</head>
+
+<body class="home-body">
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <!-- 左サイドバー -->
+  <div class="sidebar sidebar-left">
+    <a href="6-write.html" class="menu-item">
+      <img src="images/write.png" alt="書く" class="menu-icon">
+      <span class="menu-text">書く</span>
+    </a>
+
+    <a href="7-voice.html" class="menu-item">
+      <img src="images/book.png" alt="あなたの手紙" class="menu-icon">
+      <span class="menu-text">あなたの手紙</span>
+    </a>
+
+    <a href="13-search.html" class="menu-item">
+      <img src="images/sagasu.png" alt="探す" class="menu-icon">
+      <span class="menu-text">探す</span>
+    </a>
+  </div>
+
+  <!-- 中央：投稿一覧 -->
+  <div class="main-content">
+    <h1 class="title-text"><span id="userName">貴方</span>の夜空</h1>
+
+    <!-- 今日の日付 -->
+    <div class="date-display-container">
+      <a href="20-mood-calendar.html" class="date-link">
+        <span class="today-date-text" id="todayDate">今日は1/13</span>
+      </a>
+    </div>
+
+    <!-- 今日の星占いボタン -->
+    <div class="uranai-button-container">
+      <button class="uranai-btn" onclick="goToUranai()">
+        <span class="uranai-text">今日の星占い</span>
+      </button>
+    </div>
+
+    <div class="posts-container" id="postsContainer">
+      <div class="loading">星空を読み込み中...</div>
+    </div>
+  </div>
+
+  <!-- 右サイドバー -->
+  <div class="sidebar sidebar-right">
+    <a href="14-bottle.html" class="menu-item">
+      <img src="images/comment.png" alt="だれかの声" class="menu-icon">
+      <span class="menu-text">ポスト</span>
+    </a>
+
+    <a href="10-friend.html" class="menu-item">
+      <img src="images/friend.png" alt="フォロー" class="menu-icon">
+      <span class="menu-text">フォロー</span>
+    </a>
+
+    <a href="11-settings.html" class="menu-item">
+      <img src="images/settei.png" alt="設定" class="menu-icon">
+      <span class="menu-text">設定</span>
+    </a>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+  <script>
+    // ページ読み込み時に認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    // 今日の気分が記録済みかチェック
+    async function checkTodayMood() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/mood/today', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          
+          if (!result.recorded) {
+            window.location.href = '19-mood-modal.html';
+            return false;
+          }
+          return true;
+        }
+      } catch (error) {
+        console.error('気分チェックエラー:', error);
+        return true;
+      }
+    }
+
+    // 星占いページへ移動
+    function goToUranai() {
+      window.location.href = '18-uranai.html';
+    }
+
+    // ユーザー名を表示
+    async function displayUserName() {
+      try {
+        const user = await getCurrentUser();
+        if (user && user.username) {
+          document.getElementById('userName').textContent = user.username;
+        }
+      } catch (error) {
+        console.error('ユーザー情報の取得エラー:', error);
+      }
+    }
+
+    // 投稿を読み込んで表示
+    async function loadPosts() {
+      const container = document.getElementById('postsContainer');
+
+      try {
+        const result = await getPosts();
+
+        let posts;
+        if (Array.isArray(result)) {
+          posts = result;
+        } else if (result.success && result.data) {
+          posts = result.data;
+        } else if (result.posts) {
+          posts = result.posts;
+        } else {
+          posts = [];
+        }
+
+        if (!posts || posts.length === 0) {
+          container.innerHTML = '<div class="no-posts">まだ星空には手紙がありません</div>';
+          return;
+        }
+
+        posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        container.innerHTML = '';
+
+        posts.forEach(post => {
+          const postElement = createPostElement(post);
+          container.appendChild(postElement);
+        });
+      } catch (error) {
+        console.error('投稿の読み込みエラー:', error);
+        container.innerHTML = '<div class="error">投稿の読み込みに失敗しました</div>';
+      }
+    }
+
+    // 投稿要素を作成
+    function createPostElement(post) {
+      const div = document.createElement('div');
+      div.className = 'post-card';
+
+      const displayName = post.is_anonymous ? '✦' : (post.username || '名無しの星');
+      const date = new Date(post.created_at).toLocaleString('ja-JP');
+
+      let badges = '';
+      if (post.is_anonymous) {
+        badges += '<span class="anonymous-badge">匿名</span>';
+      }
+      if (post.is_shooting_star) {
+        badges += '<span class="temp-badge">流れ星</span>';
+      }
+
+      const isLighted = post.is_lighted || false;
+
+      const authorHtml = post.is_anonymous
+        ? `<span class="post-author">${displayName}</span>`
+        : `<span class="post-author clickable" onclick="goToProfile(${post.user_id})">${displayName}</span>`;
+
+      const content = post.content || '';
+      const maxLength = 100;
+      const isTruncated = content.length > maxLength;
+      const displayContent = isTruncated ? content.substring(0, maxLength) + '...' : content;
+
+      const hasMedia = post.media_type && post.media_url;
+      const showMoreBtn = (isTruncated || hasMedia) ? 
+        `<button class="show-more-btn" onclick="showFullPost(${post.id})">続きを見る</button>` : '';
+
+      // 削除ボタン（自分の投稿のみ表示）
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const isOwner = currentUser.id === post.user_id;
+      const deleteBtn = isOwner
+        ? `<button class="delete-btn" onclick="confirmDeletePost(${post.id})">削除</button>`
+        : '';
+
+      div.innerHTML = `
+    <div class="post-header">
+      ${authorHtml}
+      ${badges}
+      <span class="post-date">${date}</span>
+      ${deleteBtn}
+    </div>
+    <div class="post-content">${escapeHtml(displayContent)}</div>
+    ${showMoreBtn}
+    <div class="post-actions">
+      <button class="star-light-btn ${isLighted ? 'lighted' : ''}" onclick="sendStarLight(${post.id}, this)">
+        ${isLighted ? '★' : '☆'}
+      </button>
+      <button class="comment-btn" onclick="goToComment(${post.id})">
+        コメントする
+      </button>
+    </div>
+  `;
+
+      div.dataset.postId = post.id;
+      div.dataset.fullContent = content;
+      div.dataset.mediaUrl = post.media_url || '';
+      div.dataset.mediaType = post.media_type || '';
+
+      return div;
+    }
+
+    // 全体表示モーダルを表示
+    function showFullPost(postId) {
+      const postCard = document.querySelector(`[data-post-id="${postId}"]`);
+      if (!postCard) return;
+
+      const fullContent = postCard.dataset.fullContent;
+      const mediaUrl = postCard.dataset.mediaUrl;
+      const mediaType = postCard.dataset.mediaType;
+
+      const modal = document.createElement('div');
+      modal.className = 'post-modal-overlay';
+      modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+      };
+
+      let mediaHtml = '';
+      if (mediaType && mediaUrl) {
+        if (mediaType === 'image') {
+          mediaHtml = `<img src="http://localhost:3000/${mediaUrl}" class="post-modal-image" alt="投稿画像">`;
+        } else if (mediaType === 'video') {
+          mediaHtml = `<video src="http://localhost:3000/${mediaUrl}" class="post-modal-video" controls></video>`;
+        }
+      }
+
+      modal.innerHTML = `
+        <div class="post-modal-content">
+          <button class="post-modal-close" onclick="closeModal()">×</button>
+          <div class="post-content-full">${escapeHtml(fullContent)}</div>
+          ${mediaHtml}
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+    }
+
+    // モーダルを閉じる
+    function closeModal() {
+      const modal = document.querySelector('.post-modal-overlay');
+      if (modal) modal.remove();
+    }
+
+    // プロフィールページへ移動
+    function goToProfile(userId) {
+      window.location.href = `16-profile.html?user_id=${userId}`;
+    }
+
+    // 星の光を送る・取り消す
+    async function sendStarLight(postId, button) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/posts/${postId}/light`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.is_lighted) {
+            button.classList.add('lighted');
+            button.innerHTML = '★';
+          } else {
+            button.classList.remove('lighted');
+            button.innerHTML = '☆';
+          }
+
+          button.classList.add('sparkle');
+          setTimeout(() => button.classList.remove('sparkle'), 600);
+        } else {
+          const error = await response.json();
+          alert(error.error || '星の光の送信に失敗しました');
+        }
+      } catch (error) {
+        console.error('星の光送信エラー:', error);
+        alert('星の光を送れませんでした');
+      }
+    }
+
+    // コメントページへ移動
+    function goToComment(postId) {
+      window.location.href = `17-comment.html?post_id=${postId}`;
+    }
+
+    // HTMLエスケープ
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // 今日の日付を表示
+    function displayTodayDate() {
+      const today = new Date();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      document.getElementById('todayDate').textContent = `今日は${month}/${day}`;
+    }
+
+    // ===== 削除確認モーダル =====
+    function confirmDeletePost(postId) {
+      const modal = document.createElement('div');
+      modal.className = 'delete-modal-overlay';
+      modal.id = 'delete-confirm-modal';
+
+      modal.innerHTML = `
+        <div class="delete-modal-content">
+          <p class="modal-title">この手紙を削除しますか？</p>
+          <p class="modal-sub">削除したら元に戻せません</p>
+          <div class="delete-modal-buttons">
+            <button class="btn-cancel" onclick="closeDeleteModal()">キャンセル</button>
+            <button class="btn-delete-confirm" onclick="executeDeletePost(${postId})">削除</button>
+          </div>
+        </div>
+      `;
+
+      modal.onclick = (e) => {
+        if (e.target === modal) closeDeleteModal();
+      };
+
+      document.body.appendChild(modal);
+    }
+
+    // 削除モーダルを閉じる
+    function closeDeleteModal() {
+      const modal = document.getElementById('delete-confirm-modal');
+      if (modal) modal.remove();
+    }
+
+    // 削除実行（ホーム画面版：DOMから削除）
+    async function executeDeletePost(postId) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/posts/${postId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          closeDeleteModal();
+          // DOMから投稿カードを削除して画面を更新
+          const postCard = document.querySelector(`[data-post-id="${postId}"]`);
+          if (postCard) postCard.remove();
+        } else {
+          const error = await response.json();
+          alert(error.error || '削除に失敗しました');
+        }
+      } catch (error) {
+        console.error('削除エラー:', error);
+        alert('削除に失敗しました');
+      }
+    }
+
+    // 今日の投稿数に応じて星を表示
+    async function displayTodayStars() {
+      const result = await getTodayPostCount();
+      if (!result.success) return;
+
+      const count = Math.min(result.count, 10); // 最大10個
+      if (count === 0) return;
+
+      // 星を表示するコンテナを作成
+      let container = document.querySelector('.stars-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.className = 'stars-container';
+        document.body.appendChild(container);
+      }
+
+      // 安全エリアを定義（青枠の内側）
+      // 左側エリア: 13-28% (横), 15-75% (縦)
+      // 右側エリア: 72-87% (横), 15-75% (縦)
+      const zones = [
+        { left: [13, 28], top: [15, 75] },   // 左側の安全エリア
+        { left: [72, 87], top: [15, 75] },  // 右側の安全エリア
+      ];
+      
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'floating-star';
+        star.textContent = '⭐';
+
+        // 左右交互に配置
+        const zone = zones[i % 2];
+        
+        const left = Math.random() * (zone.left[1] - zone.left[0]) + zone.left[0];
+        const top = Math.random() * (zone.top[1] - zone.top[0]) + zone.top[0];
+
+        star.style.left = left + '%';
+        star.style.top = top + '%';
+        star.style.animationDelay = (i * 0.3) + 's';
+
+        container.appendChild(star);
+      }
+    }
+
+    // ページ読み込み時に投稿を取得
+    window.addEventListener('load', async () => {
+      displayTodayDate();
+      
+      const canProceed = await checkTodayMood();
+      
+      if (canProceed) {
+        displayUserName();
+        loadPosts();
+        displayTodayStars();
+      }
+    });
+  </script>
+</body>
+
+</html>

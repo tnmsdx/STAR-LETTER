@@ -1,0 +1,135 @@
+/* アカウント削除ページ専用CSS */
+
+.delete-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.title-text {
+  font-family: "Kaisei Decol", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 3.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 25px rgba(174, 186, 255, 0.9);
+  margin: 0 0 60px 0;
+  animation: titleGlow 3s ease-in-out infinite;
+  letter-spacing: 0.15em;
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 0 0 25px rgba(174, 186, 255, 0.9);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(174, 186, 255, 1);
+  }
+}
+
+/* 警告メッセージ */
+.warning-message {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 107, 107, 0.4);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 40px;
+  backdrop-filter: blur(10px);
+}
+
+.warning-message p {
+  color: #ffffff;
+  font-size: 1.3rem;
+  line-height: 2;
+  margin: 15px 0;
+  letter-spacing: 0.05em;
+}
+
+/* 確認テキスト */
+.confirmation-text {
+  color: #ffd700;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 50px 0;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+  letter-spacing: 0.1em;
+}
+
+/* ボタングループ */
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.delete-btn {
+  padding: 18px 60px;
+  border: none;
+  border-radius: 15px;
+  background: rgba(128, 128, 128, 0.5);
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: "Zen Old Mincho", serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.delete-btn:hover {
+  background: rgba(128, 128, 128, 0.7);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(128, 128, 128, 0.4);
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .delete-container {
+    padding: 30px 15px;
+  }
+
+  .title-text {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+  }
+
+  .warning-message {
+    padding: 30px 20px;
+  }
+
+  .warning-message p {
+    font-size: 1.1rem;
+  }
+
+  .confirmation-text {
+    font-size: 1.5rem;
+    margin: 40px 0;
+  }
+
+  .delete-btn {
+    padding: 15px 40px;
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-text {
+    font-size: 2rem;
+  }
+
+  .warning-message p {
+    font-size: 1rem;
+  }
+
+  .confirmation-text {
+    font-size: 1.3rem;
+  }
+
+  .delete-btn {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 1.2rem;
+  }
+}

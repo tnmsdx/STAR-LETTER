@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>ユーザープロフィール</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/profile.css">
+</head>
+
+<body>
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="profile-container">
+    <!-- ヘッダー -->
+    <div class="page-header">
+      <button class="home-btn" onclick="location.href='5-home.html'">
+        <img src="images/home.png" alt="ホームに戻る" style="width: 50px; height: 50px;">
+      </button>
+      <h1 class="title-text" id="pageTitle">プロフィール</h1>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- プロフィール情報 -->
+    <div class="profile-card" id="profileCard">
+      <div class="loading">読み込み中...</div>
+    </div>
+
+    <!-- ユーザーの投稿一覧 -->
+    <div class="user-posts-section">
+      <h2 class="section-title">投稿</h2>
+      <div class="posts-list" id="postsList">
+        <div class="loading">読み込み中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+  <script>
+    // 認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    // URLパラメータからユーザーIDを取得
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user_id');
+
+    if (!userId) {
+      alert('ユーザーが見つかりません');
+      window.location.href = '5-home.html';
+    }
+
+    let isFollowing = false;
+
+    // ユーザー情報を読み込む
+    async function loadUserProfile() {
+      const profileCard = document.getElementById('profileCard');
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('ユーザー情報の取得に失敗しました');
+        }
+
+        const data = await response.json();
+        const user = data.user;
+        isFollowing = data.is_following;
+
+        // タイトルを更新
+        document.getElementById('pageTitle').textContent = `${user.username}さんのプロフィール`;
+
+        // 性別の表示
+        const genderText = user.gender === 'female' ? '女性' : user.gender === 'male' ? '男性' : '秘密';
+
+        // 誕生日の表示
+        let birthdayText = '非公開';
+        if (user.birthday) {
+          const date = new Date(user.birthday);
+          const year = date.getFullYear();
+          const month = date.getMonth() + 1;
+          const day = date.getDate();
+          birthdayText = `${year}年${month}月${day}日`;
+        }
+
+        // フォローボタンの表示（自分自身の場合は非表示）
+        const currentUser = await getCurrentUser();
+        const followButton = currentUser && currentUser.id != userId
+          ? `<button class="follow-btn ${isFollowing ? 'following' : ''}" id="followBtn" onclick="toggleFollow()">
+               ${isFollowing ? 'フォロー中' : 'フォローする'}
+             </button>`
+          : '';
+
+        profileCard.innerHTML = `
+          <div class="profile-name">${user.username}</div>
+          <div class="profile-info">
+            <div class="info-item">
+              <span class="info-label">性別</span>
+              <span class="info-value">${genderText}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">誕生日</span>
+              <span class="info-value">${birthdayText}</span>
+            </div>
+          </div>
+          ${followButton}
+        `;
+      } catch (error) {
+        console.error('プロフィール読み込みエラー:', error);
+        profileCard.innerHTML = '<div class="error">プロフィールの読み込みに失敗しました</div>';
+      }
+    }
+
+    // フォロー/アンフォロー
+    async function toggleFollow() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/users/${userId}/follow`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('フォロー操作に失敗しました');
+        }
+
+        const data = await response.json();
+        isFollowing = data.is_following;
+
+        // ボタンを更新
+        const followBtn = document.getElementById('followBtn');
+        if (isFollowing) {
+          followBtn.textContent = 'フォロー中';
+          followBtn.classList.add('following');
+        } else {
+          followBtn.textContent = 'フォローする';
+          followBtn.classList.remove('following');
+        }
+      } catch (error) {
+        console.error('フォローエラー:', error);
+        alert('フォロー操作に失敗しました');
+      }
+    }
+
+    // ユーザーの投稿を読み込む
+    async function loadUserPosts() {
+      const postsList = document.getElementById('postsList');
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/posts/user/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('投稿の取得に失敗しました');
+        }
+
+        const posts = await response.json();
+
+        if (posts.length === 0) {
+          postsList.innerHTML = '<div class="no-posts">まだ投稿がありません</div>';
+          return;
+        }
+
+        // 新しい投稿順にソート
+        posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        postsList.innerHTML = '';
+
+        posts.forEach(post => {
+          const postCard = document.createElement('div');
+          postCard.className = 'post-card';
+
+          const date = new Date(post.created_at).toLocaleString('ja-JP');
+          const badge = post.is_shooting_star ? '<span class="temp-badge">流れ星</span>' : '';
+
+          postCard.innerHTML = `
+            <div class="post-header">
+              ${badge}
+              <span class="post-date">${date}</span>
+            </div>
+            <div class="post-content">${escapeHtml(post.content)}</div>
+          `;
+
+          postsList.appendChild(postCard);
+        });
+      } catch (error) {
+        console.error('投稿読み込みエラー:', error);
+        postsList.innerHTML = '<div class="error">投稿の読み込みに失敗しました</div>';
+      }
+    }
+
+    // HTMLエスケープ
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // ページ読み込み時
+    window.addEventListener('load', () => {
+      loadUserProfile();
+      loadUserPosts();
+    });
+  </script>
+</body>
+
+</html>

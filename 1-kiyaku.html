@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+  <title>利用規約</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="terms-page">
+  <div class="container">
+    <h1 class="title-text">利用規約</h1>
+
+    <p class="agreement-text">星の手紙をご利用頂くには「利用規約」に<br>
+      同意して頂く必要があります。</p>
+
+    <p><a href="#">利用規約を読む</a></p>
+
+    <form action="0-welcome.html" method="get">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="agree" id="agreeCheckbox">
+          利用規約に同意する
+        </label>
+      </div>
+      <input type="submit" value="次へ" id="submitBtn">
+    </form>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script>
+    // チェックボックスの状態によってボタンを有効/無効化
+    const checkbox = document.getElementById('agreeCheckbox');
+    const submitBtn = document.getElementById('submitBtn');
+
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.5';
+    submitBtn.style.cursor = 'not-allowed';
+
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+        submitBtn.style.cursor = 'not-allowed';
+      }
+    });
+  </script>
+</body>
+
+</html>

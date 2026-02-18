@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+  <title>星の手紙へようこそ</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/profile0.css">
+</head>
+
+<body>
+  <h1 class="title-text">星の手紙へようこそ<br>あなたのことを教えてください</h1>
+
+  <form id="profileForm">
+    <label>お名前</label><br>
+    <input type="text" name="username" id="displayName" required><br>
+
+    <label>性別</label><br>
+    <div class="radio-group">
+      <label class="radio-label">
+        <input type="radio" name="gender" value="女性" required>
+        <span class="radio-text">女性</span>
+      </label>
+
+      <label class="radio-label">
+        <input type="radio" name="gender" value="男性" required>
+        <span class="radio-text">男性</span>
+      </label>
+
+      <label class="radio-label">
+        <input type="radio" name="gender" value="秘密" required>
+        <span class="radio-text">秘密</span>
+      </label>
+    </div>
+
+    <div class="birthday-group">
+      <label>誕生日</label>
+      <div class="birthday-inputs">
+        <input type="number" name="birth_month" class="birth-input" placeholder="月" min="1" max="12">
+        /
+        <input type="number" name="birth_day" class="birth-input" placeholder="日" min="1" max="31">
+      </div>
+    </div>
+
+    <button type="submit">星の扉を開ける</button>
+  </form>
+
+  <script src="js/stars.js"></script>
+  <script src="js/gender.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // 前のページから取得
+      const registerData = JSON.parse(sessionStorage.getItem('registerData'));
+
+      if (!registerData) {
+        alert('登録情報が見つかりません。最初からやり直してください。');
+        window.location.href = '2-sinki.html';
+        return;
+      }
+
+      const month = document.querySelector('input[name="birth_month"]').value;
+      const day = document.querySelector('input[name="birth_day"]').value;
+      const birthday = (month && day) ? `2000-${month.padStart(2, '0')}-${day.padStart(2, '0')}` : null;
+
+      const fullData = {
+        ...registerData,
+        username: document.getElementById('displayName').value,
+        gender: document.querySelector('input[name="gender"]:checked')?.value || null,
+        birthday: birthday
+      };
+
+      const result = await register(fullData);
+
+      if (result.success) {
+        sessionStorage.removeItem('registerData');
+        alert('登録が完了しました');
+        window.location.href = '5-home.html';  // ← 修正
+      } else {
+        alert(result.error || '登録に失敗しました');
+      }
+    });
+  </script>
+</body>
+
+</html>

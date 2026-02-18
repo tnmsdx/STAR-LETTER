@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>あなたの手紙への声</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mypost.css">
+</head>
+
+<body>
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="mypost-container">
+    <!-- 戻るボタン -->
+    <button class="back-btn" onclick="location.href='7-voice.html'">
+      ← 
+    </button>
+
+    <h1 class="title-text">あなたの手紙への声</h1>
+
+    <!-- 自分の投稿 -->
+    <div class="my-post-section">
+      <h2 class="section-title">あなたの手紙</h2>
+      <div class="original-post" id="originalPost">
+        <div class="loading">投稿を読み込み中...</div>
+      </div>
+    </div>
+
+    <!-- 届いたコメント一覧 -->
+    <div class="comments-section">
+      <h2 class="section-title">届いた声</h2>
+      <div class="comments-list" id="commentsList">
+        <div class="loading">コメントを読み込み中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+  <script>
+    // 認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    // URLパラメータからpost_idを取得
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('post_id');
+
+    if (!postId) {
+      alert('投稿が見つかりません');
+      window.location.href = '7-voice.html';
+    }
+
+    // 自分の投稿を読み込む
+    async function loadMyPost() {
+      try {
+        const result = await getPost(postId);
+        
+        if (!result.success) {
+          document.getElementById('originalPost').innerHTML = 
+            '<div class="error">投稿の読み込みに失敗しました</div>';
+          return;
+        }
+
+        const post = result.data;
+        const date = new Date(post.created_at).toLocaleString('ja-JP');
+
+        // バッジ
+        let badges = '';
+        if (post.is_anonymous) {
+          badges += '<span class="badge anonymous">匿名</span>';
+        }
+        if (post.is_shooting_star) {
+          badges += '<span class="badge shooting-star">⭐ 流れ星</span>';
+        }
+
+        document.getElementById('originalPost').innerHTML = `
+          <div class="post-header">
+            <div class="post-date">${date}</div>
+            <div class="post-badges">${badges}</div>
+          </div>
+          <div class="post-content">${escapeHtml(post.content)}</div>
+        `;
+      } catch (error) {
+        console.error('投稿読み込みエラー:', error);
+      }
+    }
+
+    // コメント一覧を読み込む
+    async function loadComments() {
+      try {
+        const result = await getComments(postId);
+        const commentsList = document.getElementById('commentsList');
+        
+        if (!result.success) {
+          commentsList.innerHTML = '<div class="error">コメントの読み込みに失敗しました</div>';
+          return;
+        }
+
+        const comments = result.data;
+
+        if (comments.length === 0) {
+          commentsList.innerHTML = '<div class="no-comments">まだ声は届いていません</div>';
+          return;
+        }
+
+        commentsList.innerHTML = '';
+        
+        comments.forEach(comment => {
+          const commentDiv = document.createElement('div');
+          commentDiv.className = 'comment-item';
+          
+          const date = new Date(comment.created_at).toLocaleString('ja-JP');
+          
+          commentDiv.innerHTML = `
+            <div class="comment-header">
+              <span class="comment-author">${comment.username}</span>
+              <span class="comment-date">${date}</span>
+            </div>
+            <div class="comment-content">${escapeHtml(comment.content)}</div>
+          `;
+          
+          commentsList.appendChild(commentDiv);
+        });
+      } catch (error) {
+        console.error('コメント読み込みエラー:', error);
+      }
+    }
+
+    // HTMLエスケープ
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // ページ読み込み時
+    window.addEventListener('load', () => {
+      loadMyPost();
+      loadComments();
+    });
+  </script>
+</body>
+
+</html>

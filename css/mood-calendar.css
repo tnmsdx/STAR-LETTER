@@ -1,0 +1,362 @@
+/* 星空カレンダー - シンプルデザイン */
+
+.calendar-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.home-link {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.home-link:hover {
+  transform: scale(1.1);
+}
+
+.home-icon {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 0 10px rgba(174, 186, 255, 0.6));
+}
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.month-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 5px 10px;
+}
+
+.month-btn:hover {
+  color: #FFD700;
+  transform: scale(1.2);
+}
+
+.current-month {
+  font-family: "Kaisei Decol", serif;
+  font-size: 1.8rem;
+  color: #ffffff;
+  min-width: 150px;
+  text-align: center;
+  text-shadow: 0 0 15px rgba(174, 186, 255, 0.8);
+}
+
+/* カレンダーラッパー */
+.calendar-wrapper {
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* カレンダーグリッド */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day-header {
+  font-family: "Zen Old Mincho", serif;
+  font-size: 1rem;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 5px;
+  font-weight: bold;
+}
+
+/* 日曜日のヘッダー */
+.calendar-day-header:nth-child(1) {
+  color: #FF6B6B;
+}
+
+/* 土曜日のヘッダー */
+.calendar-day-header:nth-child(7) {
+  color: #4A90E2;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  background: #ffffff1a;
+  border: 1px solid #e0e0e0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.calendar-day.empty {
+  background: transparent;
+  border: none;
+}
+
+.calendar-day.today {
+  background: #84b23c52;
+  border: 2px solid #feff84ab;
+}
+
+.calendar-day.future {
+  opacity: 0.4;
+}
+
+.calendar-day.has-mood:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.day-number {
+  font-family: "Zen Old Mincho", serif;
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.day-star {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* 気分記録がない星も優しく光らせる */
+.day-star {
+  animation: starGlowGentle 3s ease-in-out infinite;
+}
+
+/* 気分記録がある星は強く光らせる */
+.calendar-day.has-mood .day-star {
+  animation: starShine 2s ease-in-out infinite;
+}
+
+/* 優しい光（薄い星用） */
+@keyframes starGlowGentle {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    transform: scale(1.05);
+  }
+}
+
+/* 強い光（色付き星用） */
+@keyframes starShine {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 12px currentColor);
+  }
+}
+
+/* モーダルウィンドウ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 2.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  line-height: 1;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.modal-close-btn:hover {
+  color: #333;
+  transform: rotate(90deg);
+}
+
+.modal-date {
+  font-family: "Kaisei Decol", serif;
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.modal-mood {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8f8f8;
+  border-radius: 15px;
+}
+
+.modal-star {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+}
+
+.modal-mood-name {
+  font-family: "Zen Old Mincho", serif;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.modal-note {
+  font-family: "Zen Old Mincho", serif;
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.8;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  min-height: 80px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .calendar-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .home-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .current-month {
+    font-size: 1.5rem;
+  }
+
+  .calendar-wrapper {
+    padding: 15px;
+  }
+
+  .calendar-grid {
+    gap: 5px;
+  }
+
+  .calendar-day {
+    padding: 5px;
+  }
+
+  .day-number {
+    font-size: 0.9rem;
+  }
+
+  .day-star {
+    font-size: 1.5rem;
+  }
+
+  .modal-content {
+    padding: 30px 20px;
+  }
+
+  .modal-date {
+    font-size: 1.2rem;
+  }
+
+  .modal-star {
+    font-size: 2.5rem;
+  }
+
+  .modal-mood-name {
+    font-size: 1.2rem;
+  }
+
+  .modal-note {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .current-month {
+    font-size: 1.2rem;
+    min-width: 120px;
+  }
+
+  .calendar-day-header {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
+
+  .day-number {
+    font-size: 0.8rem;
+  }
+
+  .day-star {
+    font-size: 1.2rem;
+  }
+}

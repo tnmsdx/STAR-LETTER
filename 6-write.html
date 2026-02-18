@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>手紙を書く</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/write.css">
+</head>
+
+<body>
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="write-container">
+    <!-- ヘッダー -->
+    <div class="page-header">
+      <!-- 左上：ホームに戻るボタン -->
+      <button class="home-btn" onclick="location.href='5-home.html'">
+        <img src="images/home.png" alt="ホームに戻る" style="width: 50px; height: 50px;">
+      </button>
+
+      <!-- タイトル -->
+      <h1 class="title-text">手紙を書く</h1>
+
+      <!-- 右上：あなたの手紙ボタン -->
+      <button class="voice-btn" onclick="location.href='7-voice.html'">
+        <img src="images/book.png" alt="あなたの手紙" style="width: 50px; height: 50px;">
+      </button>
+    </div>
+
+    <form id="writeForm">
+      <!-- テキストエリア + プラスボタン -->
+      <div class="textarea-wrapper">
+        <textarea name="content" id="content" placeholder="あなたの想いを綴ってください"></textarea>
+        <button type="button" class="plus-btn" onclick="document.getElementById('mediaFile').click()" title="写真または動画を追加">
+          +
+        </button>
+      </div>
+
+      <!-- 画像・動画アップロード（非表示） -->
+      <input type="file" id="mediaFile" name="media" accept="image/*,video/*" style="display: none;">
+      
+      <!-- プレビューエリア -->
+      <div id="mediaPreview" class="media-preview" style="display: none;">
+        <button type="button" class="remove-media-btn" onclick="removeMedia()">×</button>
+        <img id="imagePreview" style="display: none; max-width: 100%; border-radius: 10px;">
+        <video id="videoPreview" controls style="display: none; max-width: 100%; border-radius: 10px;"></video>
+      </div>
+
+      <div class="options">
+        <div class="option-item">
+          <input type="checkbox" id="anonymous" name="anonymous">
+          <label for="anonymous">匿名で投稿する</label>
+        </div>
+
+        <div class="option-item">
+          <input type="checkbox" id="nagare" name="nagare">
+          <label for="nagare">流れ星モード（24時間で消える）</label>
+        </div>
+      </div>
+
+      <button type="submit">星空へ送る</button>
+    </form>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+  <script>
+    // 認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    let selectedFile = null;
+
+    // ファイル選択時のプレビュー表示
+    document.getElementById('mediaFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      selectedFile = file;
+      const preview = document.getElementById('mediaPreview');
+      const imagePreview = document.getElementById('imagePreview');
+      const videoPreview = document.getElementById('videoPreview');
+
+      // プレビューをリセット
+      imagePreview.style.display = 'none';
+      videoPreview.style.display = 'none';
+      imagePreview.src = '';
+      videoPreview.src = '';
+
+      // ファイルタイプに応じてプレビュー
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = 'block';
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else if (file.type.startsWith('video/')) {
+        const url = URL.createObjectURL(file);
+        videoPreview.src = url;
+        videoPreview.style.display = 'block';
+        preview.style.display = 'block';
+      }
+    });
+
+    // メディア削除
+    function removeMedia() {
+      selectedFile = null;
+      document.getElementById('mediaFile').value = '';
+      document.getElementById('mediaPreview').style.display = 'none';
+      document.getElementById('imagePreview').src = '';
+      document.getElementById('videoPreview').src = '';
+    }
+
+    // フォーム送信
+    document.getElementById('writeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const content = document.getElementById('content').value.trim();
+      const isAnonymous = document.getElementById('anonymous').checked;
+      const isShootingStar = document.getElementById('nagare').checked;
+
+      // 内容またはファイルが必要
+      if (!content && !selectedFile) {
+        alert('内容または画像/動画を入力してください');
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        
+        formData.append('content', content);
+        formData.append('is_anonymous', isAnonymous);
+        formData.append('is_shooting_star', isShootingStar);
+        
+        if (selectedFile) {
+          formData.append('media', selectedFile);
+        }
+
+        const response = await fetch('http://localhost:3000/api/posts', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          // モーダルを表示
+          document.getElementById('successModal').style.display = 'flex';
+          
+          // 2.5秒後にホームへ遷移
+          setTimeout(() => {
+            window.location.href = '5-home.html';
+          }, 2500);
+        } else {
+          const error = await response.json();
+          alert('投稿に失敗しました: ' + (error.error || ''));
+        }
+      } catch (error) {
+        console.error('投稿エラー:', error);
+        alert('投稿に失敗しました');
+      }
+    });
+  </script>
+</body>
+<!-- 投稿完了モーダル -->
+  <div class="success-modal-overlay" id="successModal" style="display: none;">
+    <div class="success-modal-content">
+      <div class="shooting-stars">
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+      </div>
+      <div class="success-message">
+        <div class="success-icon">
+          <img src="images/star.png" alt="星" class="success-star-img">
+        </div>
+        <h2 class="success-title">あなたの手紙を流しました</h2>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+
+</html>

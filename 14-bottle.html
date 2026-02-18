@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>だれかの声</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/bottle.css">
+</head>
+
+<body>
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="bottle-container">
+    <!-- ヘッダー -->
+    <div class="page-header">
+      <!-- 左上：ホームに戻るボタン -->
+      <button class="home-btn" onclick="location.href='5-home.html'">
+        <img src="images/home.png" alt="ホームに戻る" style="width: 50px; height: 50px;">
+      </button>
+
+      <!-- タイトル -->
+      <h1 class="title-text">ポスト</h1>
+
+      <!-- 右上：流れ星ボタン -->
+      <button class="friend-btn" onclick="location.href='10-friend.html'">
+        <img src="images/friend.png" alt="流れ星" style="width: 50px; height: 50px;">
+      </button>
+    </div>
+
+    <div class="bottle-tabs">
+      <button class="tab-btn active" data-tab="inbox">受信</button>
+      <button class="tab-btn" data-tab="sent">送信</button>
+    </div>
+
+    <div id="messageList" class="message-list">
+      <div class="loading">読み込み中...</div>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // 認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    let currentTab = 'inbox';
+
+    // タブ切り替え
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // アクティブなタブを更新
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // タブを切り替え
+        currentTab = btn.dataset.tab;
+        loadMessages();
+      });
+    });
+
+    // メッセージを読み込む
+    async function loadMessages() {
+      const messageList = document.getElementById('messageList');
+      messageList.innerHTML = '<div class="loading">読み込み中...</div>';
+
+      try {
+        const token = localStorage.getItem('token');
+        const endpoint = currentTab === 'inbox' ? 'received' : 'sent';
+        
+        const response = await fetch(`http://localhost:3000/api/comments/${endpoint}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('コメントの取得に失敗しました');
+        }
+
+        const comments = await response.json();
+
+        if (comments.length === 0) {
+          messageList.innerHTML = `<div class="no-messages">${currentTab === 'inbox' ? 'まだ受信したコメントはありません' : 'まだ送信したコメントはありません'}</div>`;
+          return;
+        }
+
+        messageList.innerHTML = '';
+        
+        comments.forEach(comment => {
+          const messageCard = createMessageCard(comment);
+          messageList.appendChild(messageCard);
+        });
+      } catch (error) {
+        console.error('メッセージ読み込みエラー:', error);
+        messageList.innerHTML = '<div class="error">メッセージの読み込みに失敗しました</div>';
+      }
+    }
+
+    // メッセージカードを作成
+    function createMessageCard(comment) {
+      const div = document.createElement('div');
+      div.className = 'message-card';
+      
+      const date = new Date(comment.comment_date).toLocaleString('ja-JP');
+      const displayName = currentTab === 'inbox' ? comment.commenter_name : comment.post_owner_name;
+      const postPreview = comment.post_content.substring(0, 50) + (comment.post_content.length > 50 ? '...' : '');
+      
+      div.innerHTML = `
+        <div class="message-header">
+          <span class="message-from">${currentTab === 'inbox' ? 'From' : 'To'}: ${displayName}</span>
+          <span class="message-date">${date}</span>
+        </div>
+        <div class="message-post-preview">${escapeHtml(postPreview)}</div>
+        <div class="message-content">${escapeHtml(comment.comment_content)}</div>
+      `;
+      
+      // クリックで詳細ページへ
+      div.addEventListener('click', () => {
+        if (currentTab === 'inbox') {
+          // 受信：自分の投稿+コメント詳細へ
+          window.location.href = `9-mypost.html?post_id=${comment.post_id}&comment_id=${comment.comment_id}`;
+        } else {
+          // 送信：相手の投稿+自分のコメント詳細へ
+          window.location.href = `15-youpost.html?post_id=${comment.post_id}&comment_id=${comment.comment_id}`;
+        }
+      });
+      
+      return div;
+    }
+
+    // HTMLエスケープ
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // ページ読み込み時
+    window.addEventListener('load', () => {
+      loadMessages();
+    });
+  </script>
+</body>
+
+</html>

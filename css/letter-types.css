@@ -1,0 +1,229 @@
+.types-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-text {
+  font-family: "Kaisei Decol", serif;
+  font-size: 3rem;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  margin-bottom: 60px;
+  text-align: center;
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 35px rgba(174, 186, 255, 1);
+  }
+}
+
+/* 横並びレイアウト */
+.letter-types {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.type-option {
+  background: transparent;
+  border: none;
+  padding: 40px 30px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  min-width: 200px;
+}
+
+.type-option:hover {
+  transform: translateY(-8px);
+}
+
+.type-option.selected {
+  transform: scale(1.05);
+}
+
+.star-icon {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 15px rgba(174, 186, 255, 0.6));
+  transition: all 0.3s;
+}
+
+.type-option:hover .star-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 25px rgba(174, 186, 255, 0.9));
+}
+
+/* みんなに - 黄色 */
+.type-option[data-type="public"].selected .star-icon {
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+  animation: yellowPulse 1.5s ease-in-out infinite;
+}
+
+.type-option[data-type="public"].selected .type-label {
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  font-weight: bold;
+}
+
+@keyframes yellowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1));
+  }
+}
+
+/* フォロワーに - ピンク */
+.type-option[data-type="followers"].selected .star-icon {
+  filter: drop-shadow(0 0 30px rgba(255, 105, 180, 1));
+  animation: pinkPulse 1.5s ease-in-out infinite;
+}
+
+.type-option[data-type="followers"].selected .type-label {
+  color: #ff69b4;
+  text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+  font-weight: bold;
+}
+
+@keyframes pinkPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 30px rgba(255, 105, 180, 1));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(255, 105, 180, 1));
+  }
+}
+
+/* 相互フォロワーに - 水色 */
+.type-option[data-type="mutual"].selected .star-icon {
+  filter: drop-shadow(0 0 30px rgba(0, 191, 255, 1));
+  animation: cyanPulse 1.5s ease-in-out infinite;
+}
+
+.type-option[data-type="mutual"].selected .type-label {
+  color: #00bfff;
+  text-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+  font-weight: bold;
+}
+
+@keyframes cyanPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 30px rgba(0, 191, 255, 1));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(0, 191, 255, 1));
+  }
+}
+
+.type-label {
+  font-family: "Zen Old Mincho", serif;
+  font-size: 1.4rem;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s;
+}
+
+.type-option:hover .type-label {
+  text-shadow: 0 0 15px rgba(174, 186, 255, 0.8);
+}
+
+/* アクションボタン */
+.action-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.btn-action {
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: "Zen Old Mincho", serif;
+  transition: all 0.3s;
+}
+
+#backBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+#backBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+#sendBtn {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #001f3f;
+  font-weight: bold;
+  box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+}
+
+#sendBtn:hover {
+  background: linear-gradient(135deg, #ffed4e, #ffd700);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .letter-types {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .type-option {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .title-text {
+    font-size: 2.5rem;
+  }
+
+  .star-icon {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-text {
+    font-size: 2rem;
+  }
+
+  .type-option {
+    padding: 30px 20px;
+  }
+
+  .star-icon {
+    width: 100px;
+    height: 100px;
+  }
+
+  .type-label {
+    font-size: 1.2rem;
+  }
+}

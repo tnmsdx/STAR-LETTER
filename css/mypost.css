@@ -1,0 +1,179 @@
+.mypost-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Zen Old Mincho", serif;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.title-text {
+  font-family: "Kaisei Decol", serif;
+  font-size: 2.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-family: "Zen Old Mincho", serif;
+  font-size: 1.5rem;
+  color: #ffe97b;
+  text-shadow: 0 0 10px rgba(255, 233, 123, 0.5);
+  margin-bottom: 20px;
+}
+
+/* 自分の投稿 */
+.my-post-section {
+  margin-bottom: 50px;
+}
+
+.original-post {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(174, 186, 255, 0.3);
+  border-radius: 15px;
+  padding: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.post-date {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.post-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.badge.anonymous {
+  background: rgba(174, 186, 255, 0.2);
+  border-color: #aebaff;
+  color: #aebaff;
+}
+
+.badge.shooting-star {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+.post-content {
+  color: #ffffff;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* コメント一覧 */
+.comments-section {
+  margin-top: 40px;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.comment-item {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.comment-item:hover {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.comment-author {
+  color: #ffe97b;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.comment-date {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
+
+.comment-content {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.loading,
+.no-comments,
+.error {
+  text-align: center;
+  padding: 30px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .mypost-container {
+    padding: 20px 15px;
+  }
+
+  .title-text {
+    font-size: 2rem;
+  }
+
+  .original-post,
+  .comment-item {
+    padding: 20px;
+  }
+}

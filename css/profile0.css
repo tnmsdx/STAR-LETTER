@@ -1,0 +1,126 @@
+/* プロフィール入力ページ専用スタイル */
+
+/* タイトルサイズと余白を調整 */
+.title-text {
+  font-size: 2.5rem !important;
+  margin: 40px 0 30px 0 !important;
+  line-height: 1.5;
+}
+
+/* フォームコンテナ */
+form {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ラベルの余白を調整 */
+label {
+  margin: 15px 0 8px 0 !important;
+  font-size: 1.1rem;
+}
+
+/* 性別ラベルは間隔を詰める */
+form > label:nth-of-type(2) {
+  margin-bottom: 0px !important;
+}
+
+/* 入力欄の余白を調整 */
+input[type="text"],
+input[type="number"] {
+  margin: 8px 0 !important;
+}
+
+/* ラジオボタングループの余白 */
+.radio-group {
+  margin: 3px 0 15px 0 !important;
+}
+
+/* 誕生日グループ */
+.birthday-group {
+  margin: 20px 0;
+}
+
+.birthday-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.birth-input {
+  width: 120px !important;
+  text-align: center;
+}
+
+/* 送信ボタンの余白 */
+button[type="submit"] {
+  margin: 30px 0 20px 0 !important;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .title-text {
+    font-size: 2rem !important;
+    margin: 30px 0 25px 0 !important;
+  }
+
+  label {
+    font-size: 1rem;
+  }
+
+  .birthday-inputs {
+    gap: 8px;
+  }
+
+  .birth-input {
+    width: 100px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-text {
+    font-size: 1.8rem !important;
+    margin: 25px 0 20px 0 !important;
+  }
+
+  form {
+    padding: 15px;
+  }
+
+  .birthday-inputs {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .birth-input {
+    width: 150px !important;
+  }
+
+  button[type="submit"] {
+    margin: 25px 0 15px 0 !important;
+  }
+}
+
+/* 入力欄を半透明に */
+input[type="text"],
+input[type="number"] {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/* フォーカス時も半透明を維持 */
+input[type="text"]:focus,
+input[type="number"]:focus {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  border-color: rgba(174, 186, 255, 0.8) !important;
+  outline: none;
+}
+
+/* プレースホルダーの色 */
+input[type="text"]::placeholder,
+input[type="number"]::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}

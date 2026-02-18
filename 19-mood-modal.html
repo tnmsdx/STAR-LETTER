@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+  <title>今日の気分</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mood-modal.css">
+</head>
+  
+  <div class="mood-modal-container">
+    <div class="mood-modal">
+      <h2 class="mood-title">今日の気分は？</h2>
+      <p class="mood-subtitle">あなたの星空に色をつけましょう</p>
+      
+      <div class="mood-options">
+        <button class="mood-btn" data-mood="happy" onclick="selectMood('happy')">
+          <span class="mood-icon">★</span>
+          <span class="mood-name">嬉しい</span>
+        </button>
+        
+        <button class="mood-btn" data-mood="excited" onclick="selectMood('excited')">
+          <span class="mood-icon">★</span>
+          <span class="mood-name">わくわく</span>
+        </button>
+        
+        <button class="mood-btn" data-mood="peaceful" onclick="selectMood('peaceful')">
+          <span class="mood-icon">★</span>
+          <span class="mood-name">穏やか</span>
+        </button>
+        
+        <button class="mood-btn" data-mood="tired" onclick="selectMood('tired')">
+          <span class="mood-icon">★</span>
+          <span class="mood-name">疲れた</span>
+        </button>
+        
+        <button class="mood-btn" data-mood="sad" onclick="selectMood('sad')">
+          <span class="mood-icon">★</span>
+          <span class="mood-name">悲しい</span>
+        </button>
+        
+        <button class="mood-btn" data-mood="anxious" onclick="selectMood('anxious')">
+          <span class="mood-icon">★</span>
+          <span class="mood-name">不安</span>
+        </button>
+      </div>
+      
+      <div class="mood-note-section" id="noteSection" style="display: none;">
+        <label for="moodNote">今日の一言（任意）</label>
+        <textarea id="moodNote" placeholder="今日の気持ちを書いてみましょう"></textarea>
+        
+        <div class="mood-actions">
+          <button class="mood-submit-btn" onclick="submitMood()">記録する</button>
+          <button class="mood-skip-btn" onclick="skipNote()">スキップ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    let selectedMood = null;
+
+    // 認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    // 気分を選択
+    function selectMood(mood) {
+      selectedMood = mood;
+      
+      // すべてのボタンから選択状態を解除
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      
+      // 選択したボタンをハイライト
+      event.target.closest('.mood-btn').classList.add('selected');
+      
+      // メモ入力欄を表示
+      document.getElementById('noteSection').style.display = 'block';
+    }
+
+    // メモをスキップ
+    function skipNote() {
+      submitMood();
+    }
+
+    // 気分を記録
+    async function submitMood() {
+      if (!selectedMood) {
+        alert('気分を選択してください');
+        return;
+      }
+
+      const note = document.getElementById('moodNote').value;
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/mood/today', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            mood: selectedMood,
+            note: note
+          })
+        });
+
+        if (response.ok) {
+          // 記録完了をlocalStorageに保存
+          const today = new Date().toISOString().split('T')[0];
+          localStorage.setItem('mood_recorded_' + today, 'true');
+          
+          // ホーム画面へ遷移
+          window.location.href = '5-home.html';
+        } else {
+          alert('気分の記録に失敗しました');
+        }
+      } catch (error) {
+        console.error('気分記録エラー:', error);
+        alert('気分の記録に失敗しました');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+/* ユーザープロフィールページ専用CSS */
+
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* ヘッダー */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+
+.home-btn {
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  outline: none;
+}
+
+.home-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.15);
+}
+
+.home-btn:focus {
+  outline: none;
+}
+
+.home-btn img {
+  filter: drop-shadow(0 0 5px rgba(174, 186, 255, 0.5));
+}
+
+.back-btn {
+  font-size: 2rem;
+  color: #aebaff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 10px 20px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.back-btn:hover {
+  color: #ffe97b;
+  text-shadow: 0 0 15px #ffe97b;
+  transform: translateX(-5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.title-text {
+  font-family: "Kaisei Decol", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 2.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  margin: 0;
+  animation: titleGlow 3s ease-in-out infinite;
+  letter-spacing: 0.1em;
+  flex: 1;
+  text-align: center;
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(174, 186, 255, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 35px rgba(174, 186, 255, 1);
+  }
+}
+
+.header-spacer {
+  width: 80px;
+}
+
+/* プロフィールカード */
+.profile-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 50px;
+}
+
+.profile-name {
+  font-size: 2.5rem;
+  color: #ffe97b;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+  text-shadow: 0 0 15px rgba(255, 233, 123, 0.6);
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+}
+
+.info-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+}
+
+.info-value {
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* フォローボタン */
+.follow-btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  border: 2px solid rgba(174, 186, 255, 0.5);
+  border-radius: 12px;
+  background: rgba(174, 186, 255, 0.1);
+  color: #aebaff;
+  font-size: 1.3rem;
+  font-weight: bold;
+  font-family: "Zen Old Mincho", serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  outline: none;
+}
+
+.follow-btn:hover {
+  background: rgba(174, 186, 255, 0.2);
+  border-color: #aebaff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(174, 186, 255, 0.4);
+}
+
+.follow-btn.following {
+  background: rgba(174, 186, 255, 0.3);
+  border-color: #aebaff;
+  color: #ffffff;
+}
+
+.follow-btn.following:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+/* 投稿セクション */
+.user-posts-section {
+  margin-top: 40px;
+}
+
+.section-title {
+  font-family: "Kaisei Decol", serif;
+  font-size: 2rem;
+  color: #aebaff;
+  text-shadow: 0 0 15px rgba(174, 186, 255, 0.6);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 投稿カード */
+.post-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 25px 30px;
+  transition: all 0.3s;
+}
+
+.post-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #aebaff;
+  box-shadow: 0 5px 25px rgba(174, 186, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.post-date {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+.temp-badge {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #001f3f;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.post-content {
+  color: #ffffff;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* ローディング・エラー */
+.loading,
+.error,
+.no-posts {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 40px 20px;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 15px;
+  }
+
+  .title-text {
+    font-size: 2rem;
+  }
+
+  .profile-card {
+    padding: 30px 20px;
+  }
+
+  .profile-name {
+    font-size: 2rem;
+  }
+
+  .post-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-text {
+    font-size: 1.5rem;
+  }
+
+  .profile-name {
+    font-size: 1.8rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .follow-btn {
+    font-size: 1.1rem;
+  }
+}

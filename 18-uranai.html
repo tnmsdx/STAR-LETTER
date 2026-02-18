@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>今日の星占い</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/uranai.css">
+</head>
+
+<body class="uranai-body">
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="uranai-container">
+    <!-- 戻るボタン -->
+    <button class="back-btn" onclick="goBack()">← 戻る</button>
+
+    <h1 class="uranai-title">今日の星占い</h1>
+    <p class="uranai-date" id="todayDate"></p>
+
+    <!-- 星座が未設定の場合 -->
+    <div id="noZodiacSection" class="no-zodiac-section" style="display: none;">
+      <p class="message">星座が設定されていません</p>
+      <p class="sub-message">生年月日を登録すると、あなたの運勢が見られます</p>
+      <button class="set-zodiac-btn" onclick="goToSettings()">生年月日を設定する</button>
+    </div>
+
+    <!-- ローディング -->
+    <div id="loadingSection" class="loading-section">
+      <div class="loading-spinner">✨</div>
+      <p>星々からのメッセージを受信中...</p>
+    </div>
+
+    <!-- 占い結果 -->
+    <div id="fortuneSection" class="fortune-section" style="display: none;">
+      <!-- あなたの運勢 -->
+      <div class="my-fortune">
+        <div class="zodiac-icon" id="myZodiacIcon">♈</div>
+        <h2 class="my-zodiac" id="myZodiacName">おひつじ座</h2>
+        <div class="rank-display">
+          <span class="rank-number" id="myRank">1</span>
+          <span class="rank-text">位 / 12星座中</span>
+        </div>
+        <div class="stars-display" id="myStars">★★★★★</div>
+      </div>
+
+      <!-- 占いコメント -->
+      <div class="fortune-message">
+        <h3>✦ 今日の運勢</h3>
+        <p id="fortuneComment">今日は素晴らしい一日になるでしょう...</p>
+      </div>
+
+      <!-- ラッキーアイテム -->
+      <div class="lucky-item">
+        <h3>✦ ラッキーアイテム</h3>
+        <p id="luckyItem">青いペン</p>
+      </div>
+
+      <!-- アドバイス -->
+      <div class="advice">
+        <h3>✦ アドバイス</h3>
+        <p id="adviceText">積極的に行動することで運気がアップします</p>
+      </div>
+
+      <!-- 全体ランキング -->
+      <div class="ranking-section">
+        <h3>🌟 今日の12星座ランキング</h3>
+        <div class="ranking-list" id="rankingList">
+          <!-- ランキングがここに表示される -->
+        </div>
+      </div>
+    </div>
+
+    <!-- エラー表示 -->
+    <div id="errorSection" class="error-section" style="display: none;">
+      <p class="error-message" id="errorMessage"></p>
+      <button class="retry-btn" onclick="loadFortune()">再読み込み</button>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/uranai.js"></script>
+</body>
+
+</html>

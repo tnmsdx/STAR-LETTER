@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Diplomata+SC&family=Julius+Sans+One&family=Monomaniac+One&family=Noto+Serif+JP:wght@200..900&family=Shippori+Mincho&family=Shippori+Mincho+B1&family=Whisper&family=Yeseva+One&family=Zen+Kaku+Gothic+New&family=Zen+Kurenaido&family=Zen+Old+Mincho&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>あなたが送った声</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/postdetail.css">
+</head>
+
+<body>
+  <img src="images/haikei.webp" alt="背景画像" class="background-img">
+
+  <div class="detail-container">
+    <div class="page-header">
+      <a href="14-bottle.html" class="back-btn">←</a>
+      <h1 class="title-text">あなたが送った声</h1>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- 相手の投稿 -->
+    <div class="section-title">元の手紙</div>
+    <div class="original-post" id="originalPost">
+      <div class="loading">読み込み中...</div>
+    </div>
+
+    <!-- 全てのコメント -->
+    <div class="section-title">届いた声</div>
+    <div class="comments-section" id="commentsSection">
+      <div class="loading">読み込み中...</div>
+    </div>
+  </div>
+
+  <script src="js/stars.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+  <script>
+    // 認証チェック
+    if (!isLoggedIn()) {
+      alert('ログインが必要です');
+      window.location.href = '4-login.html';
+    }
+
+    // URLパラメータから取得
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('post_id');
+    const commentId = urlParams.get('comment_id');
+
+    if (!postId) {
+      alert('投稿が見つかりません');
+      window.location.href = '14-bottle.html';
+    }
+
+    // 相手の投稿を読み込む
+    async function loadOriginalPost() {
+      try {
+        const result = await getPost(postId);
+        
+        if (!result.success) {
+          document.getElementById('originalPost').innerHTML = '<div class="error">投稿の読み込みに失敗しました</div>';
+          return;
+        }
+
+        const post = result.data;
+        const displayName = post.is_anonymous ? '匿名の星' : (post.username || '名無しの星');
+        const date = new Date(post.created_at).toLocaleString('ja-JP');
+
+        document.getElementById('originalPost').innerHTML = `
+          <div class="post-author">${displayName}</div>
+          <div class="post-date">${date}</div>
+          <div class="post-content">${escapeHtml(post.content)}</div>
+        `;
+      } catch (error) {
+        console.error('投稿読み込みエラー:', error);
+      }
+    }
+
+    // コメント一覧を読み込む
+    async function loadComments() {
+      try {
+        const result = await getComments(postId);
+        const commentsSection = document.getElementById('commentsSection');
+        
+        if (!result.success) {
+          commentsSection.innerHTML = '<div class="error">コメントの読み込みに失敗しました</div>';
+          return;
+        }
+
+        const comments = result.data;
+
+        if (comments.length === 0) {
+          commentsSection.innerHTML = '<div class="no-comments">まだコメントはありません</div>';
+          return;
+        }
+
+        commentsSection.innerHTML = '';
+        
+        comments.forEach(comment => {
+          const commentDiv = document.createElement('div');
+          commentDiv.className = 'comment-item';
+          
+          // 自分のコメントをハイライト
+          if (commentId && comment.id == commentId) {
+            commentDiv.classList.add('highlight');
+          }
+          
+          const date = new Date(comment.created_at).toLocaleString('ja-JP');
+          
+          commentDiv.innerHTML = `
+            <div class="comment-header">
+              <span class="comment-author">${comment.username}</span>
+              <span class="comment-date">${date}</span>
+            </div>
+            <div class="comment-content">${escapeHtml(comment.content)}</div>
+          `;
+          
+          commentsSection.appendChild(commentDiv);
+        });
+
+        // ハイライトされたコメントにスクロール
+        if (commentId) {
+          setTimeout(() => {
+            const highlightedComment = document.querySelector('.comment-item.highlight');
+            if (highlightedComment) {
+              highlightedComment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 100);
+        }
+      } catch (error) {
+        console.error('コメント読み込みエラー:', error);
+      }
+    }
+
+    // HTMLエスケープ
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // ページ読み込み時
+    window.addEventListener('load', () => {
+      loadOriginalPost();
+      loadComments();
+    });
+  </script>
+</body>
+
+</html>
